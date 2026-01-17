@@ -1,0 +1,263 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  SUPER_ADMIN
+  ORGANIZER
+  STAFF
+  RUNNER
+}
+
+enum OrgMemberRole {
+  OWNER
+  ADMIN
+  STAFF
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  QRPH
+  GCASH
+  MAYA
+  CARD
+  BANK_TRANSFER
+  CASH
+  FREE
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ShirtSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id                   String    @id @default(uuid())
+  email                String    @unique
+  passwordHash         String
+  name                 String
+  role                 UserRole  @default(RUNNER)
+  emailVerified        Boolean   @default(false)
+  emailVerifyToken     String?
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // Relations
+  ownedOrganizations Organization[]       @relation("OrganizationOwner")
+  memberships        OrganizationMember[]
+  registrations      Registration[]       @relation("RunnerRegistrations")
+  confirmedPayments  Registration[]       @relation("PaymentConfirmer")
+  refreshTokens      RefreshToken[]
+
+  @@index([email])
+  @@index([passwordResetToken])
+  @@map("users")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  ownerId   String
+  logoUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  owner   User                 @relation("OrganizationOwner", fields: [ownerId], references: [id])
+  members OrganizationMember[]
+  events  Event[]
+
+  @@index([slug])
+  @@index([ownerId])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String        @id @default(uuid())
+  organizationId String
+  userId         String
+  role           OrgMemberRole @default(STAFF)
+  invitedAt      DateTime      @default(now())
+  acceptedAt     DateTime?
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("organization_members")
+}
+
+model Event {
+  id                String      @id @default(uuid())
+  organizationId    String
+  name              String
+  slug              String      @unique
+  description       String?
+  date              DateTime
+  location          String
+  locationMapUrl    String?
+  bannerUrl         String?
+  registrationOpen  DateTime
+  registrationClose DateTime
+  status            EventStatus @default(DRAFT)
+  paymentMethods    Json        // Array of PaymentMethod
+  bankDetails       Json?       // { bankName, accountName, accountNumber }
+  cashInstructions  String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  categories    RaceCategory[]
+  registrations Registration[]
+
+  @@index([slug])
+  @@index([organizationId])
+  @@index([status])
+  @@index([date])
+  @@map("events")
+}
+
+model RaceCategory {
+  id                String    @id @default(uuid())
+  eventId           String
+  name              String
+  distance          Decimal?  @db.Decimal(10, 2)
+  price             Decimal   @db.Decimal(10, 2)
+  earlyBirdPrice    Decimal?  @db.Decimal(10, 2)
+  earlyBirdDeadline DateTime?
+  slotLimit         Int?
+  slotsTaken        Int       @default(0)
+  sortOrder         Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  event         Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  registrations Registration[]
+
+  @@index([eventId])
+  @@map("race_categories")
+}
+
+model Registration {
+  id                String        @id @default(uuid())
+  eventId           String
+  categoryId        String
+  userId            String?
+  runnerName        String
+  email             String
+  phone             String
+  birthdate         DateTime      @db.Date
+  gender            Gender
+  shirtSize         ShirtSize
+  emergencyName     String
+  emergencyPhone    String
+  emergencyRelation String
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus @default(PENDING)
+  proofUrl          String?
+  amountPaid        Decimal?      @db.Decimal(10, 2)
+  bibNumber         String?
+  confirmedById     String?
+  confirmedAt       DateTime?
+  notes             String?
+  registeredAt      DateTime      @default(now())
+
+  // Relations
+  event       Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  category    RaceCategory  @relation(fields: [categoryId], references: [id])
+  user        User?         @relation("RunnerRegistrations", fields: [userId], references: [id])
+  confirmedBy User?         @relation("PaymentConfirmer", fields: [confirmedById], references: [id])
+  payments    Payment[]
+
+  @@unique([eventId, email])
+  @@index([eventId])
+  @@index([categoryId])
+  @@index([paymentStatus])
+  @@index([registeredAt])
+  @@map("registrations")
+}
+
+model Payment {
+  id                  String        @id @default(uuid())
+  registrationId      String
+  paymongoPaymentId   String?       @unique
+  paymongoCheckoutId  String?
+  amount              Decimal       @db.Decimal(10, 2)
+  currency            String        @default("PHP")
+  status              PaymentStatus
+  paymentMethod       PaymentMethod
+  metadata            Json?
+  paidAt              DateTime?
+  createdAt           DateTime      @default(now())
+
+  // Relations
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  @@index([registrationId])
+  @@index([paymongoPaymentId])
+  @@map("payments")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
