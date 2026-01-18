@@ -20,7 +20,10 @@ function HomePage() {
               <span className="font-bold text-xl">TakboHub</span>
             </div>
             <div className="flex items-center gap-4">
-              <Link to="/events" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link
+                to="/events"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Browse Events
               </Link>
               <Link to="/login">
@@ -42,8 +45,8 @@ function HomePage() {
           <span className="text-primary">in the Philippines</span>
         </h1>
         <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-          Discover local fun runs, marathons, and trail races. Register and pay seamlessly with GCash, Maya, or card.
-          Your next PR awaits!
+          Discover local fun runs, marathons, and trail races. Register and pay seamlessly with
+          GCash, Maya, or card. Your next PR awaits!
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">
           <Link to="/events">
@@ -105,7 +108,8 @@ function HomePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">For Race Organizers</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Stop juggling Google Forms, GCash screenshots, and spreadsheets. TakboHub handles it all.
+              Stop juggling Google Forms, GCash screenshots, and spreadsheets. TakboHub handles it
+              all.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

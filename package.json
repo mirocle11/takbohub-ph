@@ -5,10 +5,10 @@
   "description": "TakboHub - Running Events Management Platform for the Philippines",
   "type": "module",
   "scripts": {
-    "dev": "pnpm run --parallel dev:web dev:api",
+    "dev": "pnpm --parallel --filter @takbohub/web --filter @takbohub/api dev",
     "dev:web": "pnpm --filter @takbohub/web dev",
     "dev:api": "pnpm --filter @takbohub/api dev",
-    "build": "pnpm run --parallel build:web build:api",
+    "build": "pnpm --parallel --filter @takbohub/web --filter @takbohub/api build",
     "build:web": "pnpm --filter @takbohub/web build",
     "build:api": "pnpm --filter @takbohub/api build",
     "lint": "pnpm run -r lint",

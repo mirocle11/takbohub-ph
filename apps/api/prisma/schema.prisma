@@ -92,6 +92,7 @@ model User {
   refreshTokens      RefreshToken[]
 
   @@index([email])
+  @@index([role])
   @@index([passwordResetToken])
   @@map("users")
 }

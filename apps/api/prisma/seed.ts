@@ -93,7 +93,13 @@ async function main() {
     { name: '3K Fun Run', distance: 3, price: 300, earlyBirdPrice: 250, slotLimit: 200 },
     { name: '5K', distance: 5, price: 500, earlyBirdPrice: 400, slotLimit: 300 },
     { name: '10K', distance: 10, price: 700, earlyBirdPrice: 600, slotLimit: 200 },
-    { name: '21K Half Marathon', distance: 21.0975, price: 1000, earlyBirdPrice: 850, slotLimit: 100 },
+    {
+      name: '21K Half Marathon',
+      distance: 21.0975,
+      price: 1000,
+      earlyBirdPrice: 850,
+      slotLimit: 100,
+    },
   ]
 
   const earlyBirdDeadline = new Date(registrationClose)

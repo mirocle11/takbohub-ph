@@ -43,7 +43,11 @@ api.interceptors.response.use(
       originalRequest._retry = true
 
       try {
-        const { data } = await axios.post(`${API_BASE_URL}/v1/auth/refresh`, {}, { withCredentials: true })
+        const { data } = await axios.post(
+          `${API_BASE_URL}/v1/auth/refresh`,
+          {},
+          { withCredentials: true }
+        )
         setAccessToken(data.accessToken)
 
         if (originalRequest.headers) {
