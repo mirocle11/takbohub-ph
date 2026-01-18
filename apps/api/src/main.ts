@@ -46,8 +46,8 @@ async function bootstrap() {
   const port = process.env.API_PORT || 3000;
   await app.listen(port);
 
-  console.log(`🚀 TakboHub API running on http://localhost:${port}`);
-  console.log(`📚 Swagger docs at http://localhost:${port}/api/docs`);
+  console.log(`TakboHub API running on http://localhost:${port}`);
+  console.log(`Swagger docs at http://localhost:${port}/api/docs`);
 }
 
 bootstrap();
