@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Res,
-} from '@nestjs/common'
+import { Body, Controller, HttpCode, HttpStatus, Post, Res } from '@nestjs/common'
 import {
   ApiBody,
   ApiConflictResponse,
@@ -27,8 +20,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Register a new user',
-    description:
-      'Creates a new user account with RUNNER role. Sends verification email.',
+    description: 'Creates a new user account with RUNNER role. Sends verification email.',
   })
   @ApiBody({ type: RegisterDto })
   @ApiResponse({

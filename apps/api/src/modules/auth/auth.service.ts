@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { UserRole } from '@prisma/client'
@@ -89,9 +84,7 @@ export class AuthService {
 
     // Generic error for security (don't reveal if email exists)
     if (!user) {
-      this.logger.debug(
-        `Login attempt failed: email not found - ${normalizedEmail}`
-      )
+      this.logger.debug(`Login attempt failed: email not found - ${normalizedEmail}`)
       throw new UnauthorizedException('Invalid email or password')
     }
 
@@ -99,9 +92,7 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash)
 
     if (!isPasswordValid) {
-      this.logger.debug(
-        `Login attempt failed: invalid password for user ${user.id}`
-      )
+      this.logger.debug(`Login attempt failed: invalid password for user ${user.id}`)
       throw new UnauthorizedException('Invalid email or password')
     }
 
@@ -156,10 +147,7 @@ export class AuthService {
     }
 
     const refreshSecret = this.configService.get<string>('JWT_REFRESH_SECRET')
-    const refreshExpiration = this.configService.get<string>(
-      'JWT_REFRESH_EXPIRATION',
-      '7d'
-    )
+    const refreshExpiration = this.configService.get<string>('JWT_REFRESH_EXPIRATION', '7d')
 
     return this.jwtService.signAsync(payload, {
       secret: refreshSecret,

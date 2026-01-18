@@ -107,9 +107,7 @@ describe('AuthService', () => {
     it('should throw ConflictException if email already exists', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockCreatedUser)
 
-      await expect(service.register(mockRegisterDto)).rejects.toThrow(
-        ConflictException
-      )
+      await expect(service.register(mockRegisterDto)).rejects.toThrow(ConflictException)
       await expect(service.register(mockRegisterDto)).rejects.toThrow(
         'A user with this email already exists'
       )
@@ -210,9 +208,7 @@ describe('AuthService', () => {
 
     it('should return tokens and user on valid login', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockExistingUser)
-      mockPrismaService.refreshToken.create.mockResolvedValue(
-        mockRefreshTokenRecord
-      )
+      mockPrismaService.refreshToken.create.mockResolvedValue(mockRefreshTokenRecord)
       mockJwtService.signAsync
         .mockResolvedValueOnce('mock-access-token')
         .mockResolvedValueOnce('mock-refresh-token')
@@ -238,9 +234,7 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException for invalid email', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null)
 
-      await expect(service.login(mockLoginDto)).rejects.toThrow(
-        UnauthorizedException
-      )
+      await expect(service.login(mockLoginDto)).rejects.toThrow(UnauthorizedException)
       await expect(
         service.login({ ...mockLoginDto, email: 'nonexistent@example.com' })
       ).rejects.toThrow('Invalid email or password')
@@ -254,12 +248,8 @@ describe('AuthService', () => {
         password: 'wrongpassword',
       }
 
-      await expect(service.login(wrongPasswordDto)).rejects.toThrow(
-        UnauthorizedException
-      )
-      await expect(service.login(wrongPasswordDto)).rejects.toThrow(
-        'Invalid email or password'
-      )
+      await expect(service.login(wrongPasswordDto)).rejects.toThrow(UnauthorizedException)
+      await expect(service.login(wrongPasswordDto)).rejects.toThrow('Invalid email or password')
     })
 
     it('should normalize email to lowercase when looking up user', async () => {
@@ -268,9 +258,7 @@ describe('AuthService', () => {
         password: 'password123',
       }
       mockPrismaService.user.findUnique.mockResolvedValue(mockExistingUser)
-      mockPrismaService.refreshToken.create.mockResolvedValue(
-        mockRefreshTokenRecord
-      )
+      mockPrismaService.refreshToken.create.mockResolvedValue(mockRefreshTokenRecord)
       mockJwtService.signAsync
         .mockResolvedValueOnce('mock-access-token')
         .mockResolvedValueOnce('mock-refresh-token')
@@ -284,9 +272,7 @@ describe('AuthService', () => {
 
     it('should compare password with bcrypt', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockExistingUser)
-      mockPrismaService.refreshToken.create.mockResolvedValue(
-        mockRefreshTokenRecord
-      )
+      mockPrismaService.refreshToken.create.mockResolvedValue(mockRefreshTokenRecord)
       mockJwtService.signAsync.mockResolvedValue('mock-token')
 
       // Valid password should succeed
@@ -295,16 +281,14 @@ describe('AuthService', () => {
 
       // Invalid password should fail
       mockPrismaService.user.findUnique.mockResolvedValue(mockExistingUser)
-      await expect(
-        service.login({ ...mockLoginDto, password: 'wrongpassword' })
-      ).rejects.toThrow(UnauthorizedException)
+      await expect(service.login({ ...mockLoginDto, password: 'wrongpassword' })).rejects.toThrow(
+        UnauthorizedException
+      )
     })
 
     it('should store refresh token in database', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockExistingUser)
-      mockPrismaService.refreshToken.create.mockResolvedValue(
-        mockRefreshTokenRecord
-      )
+      mockPrismaService.refreshToken.create.mockResolvedValue(mockRefreshTokenRecord)
       mockJwtService.signAsync.mockResolvedValue('mock-token')
 
       await service.login(mockLoginDto)
@@ -320,9 +304,7 @@ describe('AuthService', () => {
 
     it('should generate access token with correct payload', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockExistingUser)
-      mockPrismaService.refreshToken.create.mockResolvedValue(
-        mockRefreshTokenRecord
-      )
+      mockPrismaService.refreshToken.create.mockResolvedValue(mockRefreshTokenRecord)
       mockJwtService.signAsync.mockResolvedValue('mock-token')
 
       await service.login(mockLoginDto)
@@ -337,9 +319,7 @@ describe('AuthService', () => {
 
     it('should generate refresh token with correct options', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(mockExistingUser)
-      mockPrismaService.refreshToken.create.mockResolvedValue(
-        mockRefreshTokenRecord
-      )
+      mockPrismaService.refreshToken.create.mockResolvedValue(mockRefreshTokenRecord)
       mockJwtService.signAsync.mockResolvedValue('mock-token')
 
       await service.login(mockLoginDto)
