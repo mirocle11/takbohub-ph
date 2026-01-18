@@ -14,7 +14,10 @@ export function formatCurrency(amount: number, currency = 'PHP'): string {
   }).format(amount)
 }
 
-export function formatDate(date: Date | string, format: 'short' | 'long' | 'relative' = 'short'): string {
+export function formatDate(
+  date: Date | string,
+  format: 'short' | 'long' | 'relative' = 'short'
+): string {
   const d = typeof date === 'string' ? new Date(date) : date
 
   if (format === 'relative') {

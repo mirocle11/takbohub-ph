@@ -13,7 +13,13 @@ export const paymentMethodSchema = z.enum([
   'CASH',
   'FREE',
 ])
-export const paymentStatusSchema = z.enum(['PENDING', 'CONFIRMED', 'FAILED', 'REFUNDED', 'CANCELLED'])
+export const paymentStatusSchema = z.enum([
+  'PENDING',
+  'CONFIRMED',
+  'FAILED',
+  'REFUNDED',
+  'CANCELLED',
+])
 export const genderSchema = z.enum(['MALE', 'FEMALE', 'OTHER'])
 export const shirtSizeSchema = z.enum(['XS', 'S', 'M', 'L', 'XL', 'XXL'])
 
